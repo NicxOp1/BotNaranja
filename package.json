@@ -1,0 +1,32 @@
+{
+    "name": "base-bailey-memory",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "pre-copy": "cd .. && npm run  copy.lib base-baileys-memory",
+        "start": "node app.js"
+    },
+    "keywords": [],
+    "dependencies": {
+        "@bot-whatsapp/bot": "^0.1.38",
+        "@bot-whatsapp/cli": "^0.1.38",
+        "@bot-whatsapp/database": "^0.1.38",
+        "@bot-whatsapp/portal": "^0.1.38",
+        "@bot-whatsapp/provider": "^0.1.38",
+        "@ffmpeg-installer/ffmpeg": "^1.1.0",
+        "@whiskeysockets/baileys": "^6.4.0",
+        "bot-ws-plugin-openai": "^1.0.5",
+        "date-fns": "^2.30.0",
+        "dotenv": "^16.3.1",
+        "google-auth-library": "^8.9.0",
+        "google-spreadsheet": "^3.3.0",
+        "levenshtein": "^1.0.5",
+        "moment": "^2.29.4",
+        "openai": "^3.3.0",
+        "wa-sticker-formatter": "^4.4.4"
+    },
+    "author": "Nicolas Gonzalo Lopez @2023",
+    "license": "ISC"
+}
