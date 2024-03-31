@@ -4,11 +4,15 @@ import flowAgradecimiento24hs from "./flowAgradecimiento24hs.js";
 
 const flowPrincipal = bot
   .addKeyword("bot")
-  .addAnswer(`Por favor,\nelige una opción para continuar:\n1️⃣📝🍊 *te interesa armar reuniones\no apoyar en eventos de campaña*\n2️⃣❓🍊 *Te interesa el ser representante\nde tu casilla o reclamar una lona*\n3️⃣👏🏻🍊 *Si te interesa crear un grupo de \nWhatsApp para organizar a tu comunidad,\nmarca 3.*\n4️⃣📞🍊 *Si quieres hablar con alguien de\nla Red Ciudadano en Movimiento, marca 4.*\n
+  .addAnswer(`Gracias, queremos escucharte, por favor, elige una opción para continuar:👉
+
+  * 1️⃣ ¿Te interesaría unirte a la comunidad para apoyar en eventos de campaña?  🫂
+  * 2️⃣ ¿Te interesa el ser representante de tu casilla o quieres poner una lona en tu casa?🍊
+  * 3️⃣ ¿Te interesa crear un grupo de WhatsApp para organizar a tu comunidad?👏🏻 
+  * 4️⃣ ¿Quieres hablar con alguien de la Red Ciudadano en Movimiento📞
   
-  Si en algún momento deseas\n
-  detener la comunicación con el bot,\n
-  simplemente escribe *cancelar*. 
+  Para detener la comunicación escribe Cancelar. 
+  
   ¡Estoy aquí para ayudarte! 😊`,//  4️⃣🗓️ *Ver turnos disponibles según la fecha*\n //extender el proovedor
     {capture:true, delay : 2000}, 
     async (ctx,{state,gotoFlow,endFlow,flowDynamic,provider})=> {

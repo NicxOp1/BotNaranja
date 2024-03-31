@@ -1,13 +1,15 @@
 import bot from "@bot-whatsapp/bot";
+import flowNombre from "./flowNombre.js";
 
     const flowPrueba = bot
-    .addKeyword("bot")
+    .addKeyword("asd")
     .addAnswer(("❌ Se ha agotado el tiempo de respuesta, por favor vuelve a intentarlo ❌"),
     {capture:true,delay:1000},
-        async (ctx, { endFlow }) => {
+        async (ctx, { gotoFlow }) => {
         console.log("entra")
-        await state.clear();
-        return endFlow();
+        startInactividad(ctx, gotoFlow, 10000)
+        console.log("pasa")
+        return await gotoFlow(flowNombre);
       }
     );
 

@@ -1,47 +1,59 @@
-import bot from "@bot-whatsapp/bot";
-import { buscarDatoEnSeccion,buscarDatoEnSeccionParaTraer,traerData } from "../services/sheets/index.js";
-import flowBienvenida from "./flowBienvenida.js";
+  import bot from "@bot-whatsapp/bot";
+  import { buscarDatoEnSeccion,buscarDatoEnSeccionParaTraer,traerData } from "../services/sheets/index.js";
+  import flowBienvenida from "./flowBienvenida.js";
 
-let error = 0
+  let error = 0
+  function isValidSection(section) {
+    // Verifica si 'section' es un número de no más de 4 dígitos y no contiene letras, espacios, acentos o puntuación
+    return /^\d{1,4}$/.test(section);
+  }
 
-const flowSeccion = bot
-.addKeyword('bot')
-.addAnswer(
-    ["Seguramente te interesa apoyar a las y los candidatos de Movimiento Ciudadano. 🍊🧡 \n Para hacerlo es necesario conocer tu sección electoral.\n¿*Cuál es tu sección electoral*? 💬 ",
-    "Tal vez la conoces, en caso de no ser así *recuerda* que se encuentra en el anverso de tu credencial para votar, como te mostramos en la foto que ves arriba"]
-    ,{ capture: true, delay : 2000 , media: "https://i.ibb.co/vmfYXC6/fe1b60c6-062e-4608-8c85-9c2c5f31a914-1-1.jpg"},
-    async (ctx, {state,gotoFlow,flowDynamic ,provider}) => {
-      const notificacion = await provider.getInstance();
-      const telefono = ctx.key.remoteJid;
-/*       await notificacion.sendPresenceUpdate('available', telefono); */
-        console.log("entro")    
-        let estado=state.getMyState()
-        let seccion = ctx.body
-        const resultado= await buscarDatoEnSeccion(seccion,estado.Municipio)
-        if (resultado) {
-          console.log("entro en buscarDatoEnSeccion")
-          await state.update({ Seccion: seccion });
-          let info = await traerData(seccion);
-          if(info != null){
-          console.log(info, "info")
-            await state.update({ Link: info[0].Link, Link2: info[0].Link2, Candidato: info[0].Candidato, CopyFederal: info[0].CopyFederal });
+  const flowSeccion = bot
+  .addKeyword('bot')
+  .addAnswer(
+      `¿Cuál es tu sección electoral? 💬 
+      Seguramente te interesa apoyar a las y los candidatos de Movimiento Ciudadano. 🍊🧡 
+      Para hacerlo es necesario conocer tu sección electoral, esta se encuentra en el anverso de tu credencial para votar, como te mostramos en la foto que ves arriba`
+      ,{ capture: true, delay : 2000 , media: "https://i.ibb.co/vmfYXC6/fe1b60c6-062e-4608-8c85-9c2c5f31a914-1-1.jpg"},
+      async (ctx, {state,gotoFlow,flowDynamic ,provider}) => {
+        const notificacion = await provider.getInstance();
+        const telefono = ctx.key.remoteJid;
+  /*       await notificacion.sendPresenceUpdate('available', telefono); */
+          console.log("entro")    
+          let estado=state.getMyState()
+          let seccion = ctx.body
+           // Usa la función de validación
+           if (!isValidSection(seccion)) {
             await notificacion.sendPresenceUpdate('composing', telefono);
-            await flowDynamic("Aguarda un instante, estamos cargando tu información... 🍊🧡");
-            return await gotoFlow(flowBienvenida)//menu
-        } else if(info==null){ 
-          await notificacion.sendPresenceUpdate('composing', telefono);
-           let sugerencias = await buscarDatoEnSeccionParaTraer(estado.Municipio); // Get possible sections based on municipality
-        await flowDynamic(`No hay información disponible para esta sección. Por favor, intenta con otra sección. Sugerencias: ${sugerencias.join(", ")}`);
+            await flowDynamic("Lo siento, pero la sección electoral debe ser un número de no más de 4 dígitos y no debe contener letras, espacios, acentos ni puntuación. Por favor, intenta de nuevo.");
+            return await gotoFlow(flowSeccion);
+          }
+
+          const resultado= await buscarDatoEnSeccion(seccion,estado.Municipio)
+          if (resultado) {
+            console.log("entro en buscarDatoEnSeccion")
+            await state.update({ Seccion: seccion });
+            let info = await traerData(seccion);
+            if(info != null){
+            console.log(info, "info")
+              await state.update({ Link: info[0].Link, Link2: info[0].Link2, Candidato: info[0].Candidato, CopyFederal: info[0].CopyFederal });
+              await notificacion.sendPresenceUpdate('composing', telefono);
+              await flowDynamic("Aguarda un instante, estamos cargando tu información... 🍊🧡");
+              return await gotoFlow(flowBienvenida)//menu
+          } else if(info==null){ 
+            await notificacion.sendPresenceUpdate('composing', telefono);
+            let sugerencias = await buscarDatoEnSeccionParaTraer(estado.Municipio); // Get possible sections based on municipality
+          await flowDynamic(`La sección que elegiste no forma parte de tu Municipio, por favor intenta con otra sección. aquí te dejo algunas opciones: ${sugerencias.join(", ")}`);
+          return await gotoFlow(flowSeccion);
+        }
+      }else{
+        let sugerencias = await buscarDatoEnSeccionParaTraer(estado.Municipio); // Get possible sections based on municipality
+        await notificacion.sendPresenceUpdate('composing', telefono);
+        await flowDynamic(`La sección que elegiste no forma parte de tu Municipio, por favor intenta con otra sección. aquí te dejo algunas opciones: ${sugerencias.join(", ")}`);
         return await gotoFlow(flowSeccion);
       }
-    }else{
-      let sugerencias = await buscarDatoEnSeccionParaTraer(estado.Municipio); // Get possible sections based on municipality
-      await notificacion.sendPresenceUpdate('composing', telefono);
-      await flowDynamic(`No hay información disponible para esta sección. Por favor, intenta con otra sección. Sugerencias: ${sugerencias.join(", ")}`);
-      return await gotoFlow(flowSeccion);
-    }
-  })
-    export default flowSeccion
+    })
+      export default flowSeccion
 
 
 
